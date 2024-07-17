@@ -1,7 +1,7 @@
 #include "timer.h"
 
 uint64_t micros(){
-    return ticks;
+    return ticks_timer;
 }
 
 void delayMicros(uint64_t x) {
