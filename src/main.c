@@ -3,6 +3,7 @@
 #include "bcm.h"
 #include "timer.h"
 #include "sched.h"
+#include "GPIO.h"
 
 extern void enable_irq(int);
 
@@ -11,7 +12,8 @@ extern void enable_irq(int);
  */
 void system_main(void) {
    //sched_init();
-   timer_init();
+   //timer_init();
+   GPIO_test_main();
    //asm volatile ("b task_switch");           // transfere o controle ao primeiro thread
 }
 
