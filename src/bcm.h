@@ -20,7 +20,6 @@
 #define AUX_MU_ADDR  (PERIPH_BASE + 0x215040)
 #define TIMER_ADDR   (PERIPH_BASE + 0x00B400)
 #define IRQ_ADDR     (PERIPH_BASE + 0x00B200)
-#define GPU_MAILBOX_ADDR (PERIPH_BASE + 0x00B880)
 
 #define CORE_ADDR    0x40000000
 
@@ -50,13 +49,13 @@ typedef struct {
    uint32_t gppud;       // Pull-up/down enable
    uint32_t gppudclk[2]; // Pull-up/down clock enable
 } gpio_reg_t;
-#define GPIO_REG(X)  ((volatile gpio_reg_t*)(GPIO_ADDR))->X
+#define GPIO_REG(X)  ((gpio_reg_t*)(GPIO_ADDR))->X
 
 typedef struct {
    uint32_t irq;
    uint32_t enables;
 } aux_reg_t;
-#define AUX_REG(X)   ((volatile aux_reg_t*)(AUX_ADDR))->X
+#define AUX_REG(X)   ((aux_reg_t*)(AUX_ADDR))->X
 
 typedef struct {
    uint32_t io;
@@ -71,7 +70,7 @@ typedef struct {
    uint32_t stat;
    uint32_t baud;
 } mu_reg_t;
-#define MU_REG(X)    ((volatile mu_reg_t*)(AUX_MU_ADDR))->X
+#define MU_REG(X)    ((mu_reg_t*)(AUX_MU_ADDR))->X
 
 typedef struct {
    uint32_t load;
@@ -84,7 +83,7 @@ typedef struct {
    uint32_t pre;
    uint32_t counter;
 } timer_reg_t;
-#define TIMER_REG(X)   ((volatile timer_reg_t*)(TIMER_ADDR))->X
+#define TIMER_REG(X)   ((timer_reg_t*)(TIMER_ADDR))->X
 
 typedef struct {
    uint32_t pending_basic;
@@ -98,7 +97,7 @@ typedef struct {
    uint32_t disable_2;
    uint32_t disable_basic;
 } irq_reg_t;
-#define IRQ_REG(X)     ((volatile irq_reg_t*)(IRQ_ADDR))->X
+#define IRQ_REG(X)     ((irq_reg_t*)(IRQ_ADDR))->X
 
 typedef struct {
    uint32_t control;
@@ -130,19 +129,56 @@ typedef struct {
    uint32_t core2_mailbox_read[4];
    uint32_t core3_mailbox_read[4];
 } core_reg_t;
-#define CORE_REG(X)     ((volatile core_reg_t*)(CORE_ADDR))->X
+#define CORE_REG(X)     ((core_reg_t*)(CORE_ADDR))->X
 
 typedef struct {
-   uint32_t read;
-   unsigned : 32;
-   unsigned : 32;
-   unsigned : 32;
-   uint32_t poll;
-   uint32_t sender;
-   uint32_t status;
-   uint32_t config;
-   uint32_t write;
-} gpumail_reg_t;
-#define GPUMAIL_REG(X)     ((volatile gpumail_reg_t*)(GPU_MAILBOX_ADDR))->X
+   uint32_t cs;
+   uint32_t cbaddr;
+   uint32_t info;
+   uint32_t src;
+   uint32_t dst;
+   uint32_t length;
+   uint32_t stride;
+   uint32_t next;
+   uint32_t debug;
+} dma_reg_t;
+
+typedef struct {
+   uint32_t irq;
+   uint32_t pad[3];
+   uint32_t enable;
+} dma_com_t;
+
+typedef struct {
+   uint32_t info;
+   uint32_t src;
+   uint32_t dst;
+   uint32_t length;
+   uint32_t stride;
+   uint32_t next;
+   uint32_t pad[2];
+} dma_cb_t;
+
+#define DMA_REG_ADDR_0  (PERIPH_BASE + 0x7000)
+#define DMA_REG_ADDR_1  (PERIPH_BASE + 0x7100)
+#define DMA_REG_ADDR_2  (PERIPH_BASE + 0x7200)
+#define DMA_REG_ADDR_3  (PERIPH_BASE + 0x7300)
+#define DMA_REG_ADDR_4  (PERIPH_BASE + 0x7400)
+#define DMA_REG_ADDR_5  (PERIPH_BASE + 0x7500)
+#define DMA_REG_ADDR_6  (PERIPH_BASE + 0x7600)
+#define DMA_REG_ADDR_7  (PERIPH_BASE + 0x7700)
+#define DMA_REG_ADDR_8  (PERIPH_BASE + 0x7800)
+#define DMA_REG_ADDR_9  (PERIPH_BASE + 0x7900)
+#define DMA_REG_ADDR_10  (PERIPH_BASE + 0x7a00)
+#define DMA_REG_ADDR_11  (PERIPH_BASE + 0x7b00)
+#define DMA_REG_ADDR_12  (PERIPH_BASE + 0x7c00)
+#define DMA_REG_ADDR_13  (PERIPH_BASE + 0x7d00)
+#define DMA_REG_ADDR_14  (PERIPH_BASE + 0x7e00)
+#define DMA_COM_ADDR     (PERIPH_BASE + 0x7fe0)
+
+#define DMA_REG(N, X)      ((dma_reg_t*)(DMA_REG_ADDR_##N))->X
+#define DMA_COM_REG(X)     ((dma_com_t*)(DMA_COM_ADDR))->X
+
+void enable_irq(uint32_t en);
 
 #endif

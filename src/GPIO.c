@@ -2,10 +2,8 @@
 #include <stdint.h>
 #include "GPIO.h"
 
-
 volatile uint32_t* gpio_set = (volatile uint32_t*) GPIO_SET_REG; // Pointer to the GPSET0
 volatile uint32_t* gpio_clr = (volatile uint32_t*) GPIO_CLR_REG; // Pointer to the GPCLR0
-
 
 void config_gpio_output(int pin) {
     asm volatile(
@@ -64,7 +62,6 @@ uint32_t read_gpio_pin(int pin) {
     return value;
 }
 
-
 void setGPIOpin(uint8_t pin) {
     asm volatile(
         "mov r0, %[pin]\n"            // Move pin number into r0
@@ -90,22 +87,3 @@ void clearGPIOpin(uint8_t pin) {
         : "r0", "r1", "r2"            // Clobbered registers
     );
 }       
-
-
-int GPIO_test_main() {
-    // Exemplo de uso para configurar o pino 17 como entrada
-    config_gpio_input(17);
-    config_gpio_output(47);
-    setGPIOpin(26);
-
-    while (1){
-        /*
-        if(read_gpio_pin(17)){
-            setGPIOpin(26);
-        }else {
-            setGPIOpin(26);   
-        }*/
-    }
-    return 0;
-}
-
