@@ -39,7 +39,8 @@ void digitalWrite(uint8_t pin, uint8_t val) {
 
 // TODO Proper digitalRead
 uint8_t digitalRead(uint8_t pin) {
-    // lê o estado do GPIO 17
-    int gpio17 = GPIO_REG(gplev[0]) & (0x01 << 17);
-    return 1;
+    uint8_t reg = pin % 32;
+    // lê o estado do GPIO
+    int gpio_value = GPIO_REG(gplev[reg]) & (0x01 << pin);
+    return gpio_value;
 }
