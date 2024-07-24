@@ -31,9 +31,9 @@ void pinMode(uint8_t pin, uint8_t mode) {
 void digitalWrite(uint8_t pin, uint8_t val) {
     uint8_t reg = pin % 32;
     if (val == HIGH){
-        GPIO_REG(gpset[0]) = 0x01 << pin;
+        GPIO_REG(gpset[reg]) = 0x01 << pin;
     } else if (val == LOW){
-        GPIO_REG(gpclr[0]) = 0x01 << pin;
+        GPIO_REG(gpclr[reg]) = 0x01 << pin;
     }
 }
 
