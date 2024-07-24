@@ -2,8 +2,8 @@
 #include "timer.h"
 #include "GPIO.h"
 
-#define DIOPIN 2
-#define CLKPIN 3
+#define DIOPIN 27
+#define CLKPIN 22
 #define BIT_DELAY 100 // In Microseconds
 #define BRIGHTNESS 15 // (Display On << 3) | (Display brightness (0 - 7))
 #define TM1637_I2C_COMM1 0x40
