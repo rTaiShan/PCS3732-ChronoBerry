@@ -1,5 +1,6 @@
 #include "display.h"
 #include "timer.h"
+#include "GPIO.h"
 
 #define DIOPIN 2
 #define CLKPIN 3
@@ -8,25 +9,6 @@
 #define TM1637_I2C_COMM1 0x40
 #define TM1637_I2C_COMM2 0xC0
 #define TM1637_I2C_COMM3 0x80
-
-// TODO Proper pinMode
-#define INPUT 0
-#define OUTPUT 1
-void pinMode(uint8_t pin, uint8_t mode) {
-
-}
-
-// TODO Proper digitalWrite
-#define LOW 0
-#define HIGH 1
-void digitalWrite(uint8_t pin, uint8_t val) {
-    
-}
-
-// TODO Proper digitalRead
-uint8_t digitalRead(uint8_t pin) {
-    return 1;
-}
 
 const uint8_t digitToSegment[] = {
     // XGFEDCBA

@@ -20,18 +20,7 @@ int main(void)
    initDisplay();
    enable_irq(1);
 
-   // GPIO Usage example
-   config_gpio_input(17);
-   config_gpio_output(47);
-   setGPIOpin(26);
-
    while (1) {
-      if(read_gpio_pin(17)){
-         setGPIOpin(26);
-      } else {
-         setGPIOpin(26);   
-      }
-
       display_state_t displayState = {
          .digit0 = 1,
          .digit1 = 2,         
