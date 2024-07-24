@@ -1,8 +1,8 @@
 #include "display.h"
 #include "timer.h"
 
-#define CLK 9
-#define DIO 8
+#define DIOPIN 2
+#define CLKPIN 3
 #define BIT_DELAY 100 // In Microseconds
 #define BRIGHTNESS 15 // (Display On << 3) | (Display brightness (0 - 7))
 #define TM1637_I2C_COMM1 0x40
@@ -57,23 +57,23 @@ void bitDelay() {
 }
 
 void initDisplay() {
-    pinMode(CLK, INPUT);
-    pinMode(DIO, INPUT);
-    digitalWrite(CLK, LOW);
-    digitalWrite(DIO, LOW);
+    pinMode(CLKPIN, INPUT);
+    pinMode(DIOPIN, INPUT);
+    digitalWrite(CLKPIN, LOW);
+    digitalWrite(DIOPIN, LOW);
 }
 
 void startSignal() {
-    pinMode(DIO, OUTPUT);
+    pinMode(DIOPIN, OUTPUT);
     bitDelay();
 }
 
 void stopSignal() {
-    pinMode(DIO, OUTPUT);
+    pinMode(DIOPIN, OUTPUT);
     bitDelay();
-    pinMode(CLK, INPUT);
+    pinMode(CLKPIN, INPUT);
     bitDelay();
-    pinMode(DIO, INPUT);
+    pinMode(DIOPIN, INPUT);
     bitDelay();
 }
 
@@ -83,39 +83,39 @@ uint8_t writeByte(uint8_t b) {
     // 8 Data Bits
     for (uint8_t i = 0; i < 8; i++)
     {
-        // CLK low
-        pinMode(CLK, OUTPUT);
+        // CLKPIN low
+        pinMode(CLKPIN, OUTPUT);
         bitDelay();
 
         // Set data bit
         if (data & 0x01)
-            pinMode(DIO, INPUT);
+            pinMode(DIOPIN, INPUT);
         else
-            pinMode(DIO, OUTPUT);
+            pinMode(DIOPIN, OUTPUT);
 
         bitDelay();
 
-        // CLK high
-        pinMode(CLK, INPUT);
+        // CLKPIN high
+        pinMode(CLKPIN, INPUT);
         bitDelay();
         data = data >> 1;
     }
 
     // Wait for acknowledge
-    // CLK to zero
-    pinMode(CLK, OUTPUT);
-    pinMode(DIO, INPUT);
+    // CLKPIN to zero
+    pinMode(CLKPIN, OUTPUT);
+    pinMode(DIOPIN, INPUT);
     bitDelay();
 
-    // CLK to high
-    pinMode(CLK, INPUT);
+    // CLKPIN to high
+    pinMode(CLKPIN, INPUT);
     bitDelay();
-    uint8_t ack = digitalRead(DIO);
+    uint8_t ack = digitalRead(DIOPIN);
     if (ack == 0)
-        pinMode(DIO, OUTPUT);
+        pinMode(DIOPIN, OUTPUT);
 
     bitDelay();
-    pinMode(CLK, OUTPUT);
+    pinMode(CLKPIN, OUTPUT);
     bitDelay();
 
     return ack;

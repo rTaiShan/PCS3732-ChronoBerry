@@ -4,6 +4,8 @@
 #include "GPIO.h"
 #include "display.h"
 
+#define BUTTONPIN 0 
+
 // Entry point for interrupt services
 void __attribute__((interrupt("IRQ"))) 
 handleIrq(void) {
