@@ -1,6 +1,7 @@
 
 #include <stdint.h>
 #include "GPIO.h"
+#include "bcm.h"
 
 #define HIGH 0x1
 #define LOW  0x0
@@ -28,7 +29,7 @@ void pinMode(uint8_t pin, uint8_t mode) {
 
 // TODO Proper digitalWrite
 void digitalWrite(uint8_t pin, uint8_t val) {
-    uint8_t reg = pin % 32
+    uint8_t reg = pin % 32;
     if (val == HIGH){
         GPIO_REG(gpset[0]) = 0x01 << pin;
     } else if (val == LOW){
