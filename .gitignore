@@ -1,3 +1,11 @@
+kernel.elf 
+kernel.map 
+kernel.list 
+kernel.img 
+kernel.hex
+
+.vscode/
+
 # Created by https://www.toptal.com/developers/gitignore/api/c,assembler
 # Edit at https://www.toptal.com/developers/gitignore?templates=c,assembler
 
