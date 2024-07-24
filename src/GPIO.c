@@ -21,9 +21,9 @@ void pinMode(uint8_t pin, uint8_t mode) {
     uint32_t fsel = GPIO_REG(gpfsel[reg_num]);
 
     if (mode == OUTPUT) {
-        GPIO_REG(gpfsel[reg_num]) = (fsel & (~(0x7 << offset))) | (1 << (0x7 << offset));
+        GPIO_REG(gpfsel[reg_num]) = (fsel & (~(0x7 << offset))) | (0x1 << offset);
     } else if (mode == INPUT) {
-        GPIO_REG(gpfsel[reg_num]) = (fsel & (~(0x7 << offset))) | (0 << (0x7 << offset));
+        GPIO_REG(gpfsel[reg_num]) = (fsel & (~(0x7 << offset)));
     }
 }
 
