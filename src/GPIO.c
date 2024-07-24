@@ -28,7 +28,7 @@ void pinMode(uint8_t pin, uint8_t mode) {
 
 // TODO Proper digitalWrite
 void digitalWrite(uint8_t pin, uint8_t val) {
-    // liga a saída 18 e desliga a saída 19
+    uint8_t reg = pin % 32
     if (val == HIGH){
         GPIO_REG(gpset[0]) = 0x01 << pin;
     } else if (val == LOW){
@@ -38,7 +38,7 @@ void digitalWrite(uint8_t pin, uint8_t val) {
 
 // TODO Proper digitalRead
 uint8_t digitalRead(uint8_t pin) {
-
-
+    // lê o estado do GPIO 17
+    int gpio17 = GPIO_REG(gplev[0]) & (0x01 << 17);
     return 1;
 }
