@@ -31,16 +31,20 @@ void pinMode(uint8_t pin, uint8_t mode) {
 void digitalWrite(uint8_t pin, uint8_t val) {
     uint8_t reg = pin / 32;
     if (val == HIGH) {
-        GPIO_REG(gpset[reg]) = 0x01 << pin % 32;
+        GPIO_REG(gpset[reg]) = 0x01 << (pin % 32);
     } else if (val == LOW) {
-        GPIO_REG(gpclr[reg]) = 0x01 << pin % 32;
+        GPIO_REG(gpclr[reg]) = 0x01 << (pin % 32);
     }
 }
 
 // TODO Proper digitalRead
 uint8_t digitalRead(uint8_t pin) {
-    uint8_t reg = pin % 32;
+    uint8_t reg = pin / 32;
     // lê o estado do GPIO
-    int gpio_value = GPIO_REG(gplev[reg]) & (0x01 << pin);
-    return gpio_value;
+    int gpio_value = GPIO_REG(gplev[reg]) & (0x01 << (pin % 32));
+
+    if (gpio_value > 0){
+        return 1;
+    }
+    return 0;
 }
