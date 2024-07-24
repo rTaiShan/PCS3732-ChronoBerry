@@ -2,6 +2,7 @@
 #include "bcm.h"
 #include "timer.h"
 #include "GPIO.h"
+#include "display.h"
 
 // Entry point for interrupt services
 void __attribute__((interrupt("IRQ"))) 
@@ -14,6 +15,7 @@ handleIrq(void) {
 int main(void) 
 {
    initTimer();
+   initDisplay();
    enable_irq(1);
 
    // GPIO Usage example
@@ -27,6 +29,15 @@ int main(void)
       } else {
          setGPIOpin(26);   
       }
+
+      display_state_t displayState = {
+         .digit0 = 1,
+         .digit1 = 2,         
+         .digit2 = 3,
+         .digit3 = 4,
+         .dots = 1
+      };
+      display(&displayState);
    }
 
    return 0;
