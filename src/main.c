@@ -8,8 +8,10 @@
 #define LED_BUILTIN 47
 
 #define SHOW_TIME 0
-#define ADJUST_MINUTES 1
-#define ADJUST_HOURS 2
+#define ADJUST_LEAST_SIGNIFICANT 1
+#define MOST_SIGNIFICANT_INCREMENT 3600000
+#define ADJUST_MOST_SIGNIFICANT 2
+#define LEAST_SIGNIFICANT_INCREMENT 60000
 
 void displayTime(uint32_t, uint8_t);
 
@@ -71,19 +73,20 @@ int main(void)
       if (buttonLongPressed) { // Handle long press
          switch (state) {
          case SHOW_TIME:
-            state = ADJUST_HOURS;
+            state = ADJUST_MOST_SIGNIFICANT;
             adjustStartTime = millis();
             timeOffset = adjustStartTime + timeOffset;
             digitalWrite(LED_BUILTIN, HIGH);
             break;
 
-         case ADJUST_HOURS:
-            state = ADJUST_MINUTES;
+         case ADJUST_MOST_SIGNIFICANT:
+            state = ADJUST_LEAST_SIGNIFICANT;
             break;
 
-         case ADJUST_MINUTES:
+         case ADJUST_LEAST_SIGNIFICANT:
             state = SHOW_TIME;
             timeOffset -= millis();
+            timeOffset -= (timeOffset % LEAST_SIGNIFICANT_INCREMENT); // Set seconds = 0
             digitalWrite(LED_BUILTIN, LOW);
             break;
          
@@ -92,14 +95,17 @@ int main(void)
          }
       } else if (buttonPressed) { // Handle short press
          switch (state) {
-         case ADJUST_HOURS:
-            // timeOffset = timeOffset + 3600000;
-            timeOffset = timeOffset + 60000;
+         uint32_t newTimeOffset;
+         case ADJUST_MOST_SIGNIFICANT:
+            timeOffset = timeOffset + MOST_SIGNIFICANT_INCREMENT;
             break;
 
-         case ADJUST_MINUTES:
-            // timeOffset = timeOffset + 60000;
-            timeOffset = timeOffset + 1000;
+         case ADJUST_LEAST_SIGNIFICANT:
+            newTimeOffset = timeOffset + LEAST_SIGNIFICANT_INCREMENT;
+            if ((newTimeOffset % MOST_SIGNIFICANT_INCREMENT) < (timeOffset % MOST_SIGNIFICANT_INCREMENT)) {
+               newTimeOffset -= MOST_SIGNIFICANT_INCREMENT;
+            }
+            timeOffset = newTimeOffset;
             break;
          
          default:
@@ -118,11 +124,11 @@ int main(void)
             displayTime(millis() + timeOffset, dotEnable);
             break;
          
-         case ADJUST_MINUTES:
+         case ADJUST_LEAST_SIGNIFICANT:
             displayTime(timeOffset, dotEnable);
             break;
          
-         case ADJUST_HOURS: 
+         case ADJUST_MOST_SIGNIFICANT: 
             displayTime(timeOffset, dotEnable);
             break;
 
@@ -136,13 +142,13 @@ int main(void)
 
 void displayTime(uint32_t time, uint8_t dotEnable) {
    display_state_t displayState;
-   uint32_t seconds = time / 1000;
+   uint32_t minutes = time / 60000;
+   uint32_t hours = minutes / 60;
    
-   uint32_t minutes = seconds / 60;
-   displayState.digit0 = (minutes % 60) / 10;
-   displayState.digit1 = minutes % 10;
-   displayState.digit2 = (seconds % 60) / 10;
-   displayState.digit3 = seconds % 10;
+   displayState.digit0 = (hours % 24) / 10;
+   displayState.digit1 = hours % 10;
+   displayState.digit2 = (minutes % 60) / 10;
+   displayState.digit3 = minutes % 10;
    displayState.dots = dotEnable;
    display(&displayState);
 }
