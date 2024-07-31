@@ -24,36 +24,30 @@ int main(void)
 
    uint32_t digito0, digito1, digito2, digito3;
    digito0 = digito1 = digito2 = digito3 = 0;
-   uint32_t tempo = 100;
+   uint32_t lastSwitch = 0;
+   uint32_t timeOffset = 0;
 
-   display_state_t displayState = {
-       .digit0 = 1,
-       .digit1 = 2,
-       .digit2 = 3,
-       .digit3 = 4,
-       .dots = 1};
-   uint64_t tempo_antes;
+   display_state_t displayState;
+
+   setTicks(0);
 
    while (1)
-   {
-      tempo_antes = micros();
+   {  
+      // uint32_t now = millis() - timeOffset;
+      uint32_t now = millis();
+      if (now - lastSwitch > 1000) {
+         displayState.dots = !displayState.dots;
+         lastSwitch = now;
+      }
+      
+      uint32_t seconds = now / 1000;
+      displayState.digit2 = (seconds % 60) / 10;
+      displayState.digit3 = seconds % 10;
+      uint32_t minutes = seconds / 60;
+      displayState.digit0 = (minutes % 60) / 10;
+      displayState.digit1 = minutes % 10;
 
-      uint32_t minutos = tempo / 60;
-      uint32_t segundos = (tempo - minutos * 60);
-
-      uint32_t unidades_segundos = segundos % 10;
-      uint32_t dezenas_segundos = (segundos / 10) % 10;
-      uint32_t unidades_minutos = minutos % 10;
-      uint32_t dezenas_minutos = (minutos / 10) % 10;
-
-      displayState.digit0 = dezenas_minutos;
-      displayState.digit1 = unidades_minutos;
-      displayState.digit2 = dezenas_segundos;
-      displayState.digit3 = unidades_segundos;
-
-      tempo--;
       display(&displayState);
-      delayMicros(1000000 - (micros() - tempo_antes));
    }
 
    return 0;
