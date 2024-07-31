@@ -73,7 +73,7 @@ int main(void)
          case SHOW_TIME:
             state = ADJUST_HOURS;
             adjustStartTime = millis();
-            timeOffset = adjustStartTime - timeOffset;
+            timeOffset = adjustStartTime + timeOffset;
             digitalWrite(LED_BUILTIN, HIGH);
             break;
 
@@ -83,7 +83,7 @@ int main(void)
 
          case ADJUST_MINUTES:
             state = SHOW_TIME;
-            timeOffset = timeOffset - 2 * (millis() - adjustStartTime);
+            timeOffset -= millis();
             digitalWrite(LED_BUILTIN, LOW);
             break;
          
