@@ -86,6 +86,9 @@ int main(void)
          case ADJUST_LEAST_SIGNIFICANT:
             state = SHOW_TIME;
             timeOffset -= millis();
+
+            // Make seconds = 0
+            timeOffset -= (millis() + timeOffset) % LEAST_SIGNIFICANT_INCREMENT;
             digitalWrite(LED_BUILTIN, LOW);
             break;
          
