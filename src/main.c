@@ -86,7 +86,6 @@ int main(void)
          case ADJUST_LEAST_SIGNIFICANT:
             state = SHOW_TIME;
             timeOffset -= millis();
-            timeOffset -= (timeOffset % LEAST_SIGNIFICANT_INCREMENT); // Set seconds = 0
             digitalWrite(LED_BUILTIN, LOW);
             break;
          
@@ -143,7 +142,7 @@ int main(void)
 void displayTime(uint32_t time, uint8_t dotEnable) {
    display_state_t displayState;
    uint32_t minutes = time / 60000;
-   uint32_t hours = minutes / 60;
+   uint32_t hours = (minutes / 60) % 24;
    
    displayState.digit0 = (hours % 24) / 10;
    displayState.digit1 = hours % 10;
