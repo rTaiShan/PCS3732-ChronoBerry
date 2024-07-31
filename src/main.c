@@ -21,20 +21,16 @@ int main(void)
    initTimer();
    initDisplay();
    enable_irq(1);
+   setTicks(0);
 
-   uint32_t digito0, digito1, digito2, digito3;
-   digito0 = digito1 = digito2 = digito3 = 0;
    uint32_t lastSwitch = 0;
    uint32_t timeOffset = 0;
-
    display_state_t displayState;
-
-   setTicks(0);
 
    while (1)
    {  
-      // uint32_t now = millis() - timeOffset;
-      uint32_t now = millis();
+      uint32_t now = millis() - timeOffset;
+      
       if (now - lastSwitch > 1000) {
          displayState.dots = !displayState.dots;
          lastSwitch = now;
