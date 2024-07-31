@@ -4,11 +4,11 @@
 volatile uint32_t ticks = 0;
 
 uint64_t micros(){
-    return ticks * 1000;
+    return ticks * 100;
 }
 
 uint32_t millis() {
-    return ticks;
+    return ticks / 10;
 }
 
 void delayMicros(uint64_t x) {
@@ -31,7 +31,7 @@ void handleTimerInterrupt(void) {
 }
 
 void initTimer(void) {
-    TIMER_REG(load) = 1000;             // 1MHz / 1 = 1MHz
+    TIMER_REG(load) = 100;             // 1MHz / 1 = 1MHz
     //TIMER_REG(pre) = 126;
     TIMER_REG(control) = (1 << 9)    // free-running counter
                        | (1 << 7)    // enable timer

@@ -27,7 +27,6 @@ void pinMode(uint8_t pin, uint8_t mode) {
     }
 }
 
-// TODO Proper digitalWrite
 void digitalWrite(uint8_t pin, uint8_t val) {
     uint8_t reg = pin / 32;
     if (val == HIGH) {
@@ -37,7 +36,6 @@ void digitalWrite(uint8_t pin, uint8_t val) {
     }
 }
 
-// TODO Proper digitalRead
 uint8_t digitalRead(uint8_t pin) {
     uint8_t reg = pin / 32;
     // lê o estado do GPIO

@@ -4,7 +4,7 @@
 
 #define DIOPIN 27
 #define CLKPIN 22
-#define BIT_DELAY 1 // In Milliseconds
+#define BIT_DELAY 100 // In Microsseconds
 #define BRIGHTNESS 15 // (Display On << 3) | (Display brightness (0 - 7))
 #define TM1637_I2C_COMM1 0x40
 #define TM1637_I2C_COMM2 0xC0
@@ -35,7 +35,7 @@ uint8_t encodeDigit(uint8_t digit) {
 }
 
 void bitDelay() {
-    delay(BIT_DELAY);
+    delayMicros(BIT_DELAY);
 }
 
 void initDisplay() {
