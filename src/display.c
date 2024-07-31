@@ -30,6 +30,8 @@ const uint8_t digitToSegment[] = {
     0b01110001  // F
 };
 
+display_state_t currentState;
+
 uint8_t encodeDigit(uint8_t digit) {
     return digitToSegment[digit & (~SEG_DOT)];
 }
@@ -136,8 +138,29 @@ void encodeState(display_state_t* state, uint8_t* data) {
     }
 }
 
+uint8_t stateChanged(display_state_t *state) {
+    return !(
+        state->digit0 == currentState.digit0 &&
+        state->digit1 == currentState.digit1 &&
+        state->digit2 == currentState.digit2 &&
+        state->digit3 == currentState.digit3 &&
+        state->dots == currentState.dots
+    );
+}
+
+void updateCurrentState(display_state_t *state) {
+    currentState.digit0 = state->digit0;
+    currentState.digit1 = state->digit1;
+    currentState.digit2 = state->digit2;
+    currentState.digit3 = state->digit3;
+    currentState.dots = state->dots;
+}
+
 void display(display_state_t *state) {
     uint8_t data[4];
     encodeState(state, data);
+    if (!stateChanged(state))
+        return
     displayRaw(data);
+    updateCurrentState(state);
 }

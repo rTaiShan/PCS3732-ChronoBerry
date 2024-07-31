@@ -5,6 +5,13 @@
 #include "display.h"
 
 #define BUTTONPIN 17
+#define LED_BUILTIN 47
+
+#define SHOW_TIME 0
+#define ADJUST_MINUTES 1
+#define ADJUST_HOURS 2
+
+void displayTime(uint32_t, uint8_t);
 
 // Entry point for interrupt services
 void __attribute__((interrupt("IRQ")))
@@ -23,48 +30,119 @@ int main(void)
    enable_irq(1);
    setTicks(0);
 
-   uint32_t lastSwitch = 0;
    uint32_t timeOffset = 0;
-   display_state_t displayState;
-   uint32_t count = 0;
+   
+   // Display dot control
+   uint32_t lastDotBlink = 0;
+   uint8_t dotEnable = 0;
 
+   uint8_t state = SHOW_TIME;
+   uint32_t adjustStartTime;
+
+   pinMode(LED_BUILTIN, OUTPUT);
+   digitalWrite(LED_BUILTIN, LOW);
    pinMode(BUTTONPIN, INPUT);
-   uint8_t lastState = digitalRead(BUTTONPIN);
+   uint8_t lastButtonState = !digitalRead(BUTTONPIN);
+   uint32_t buttonPressTime;
 
    while (1)
    {  
-      uint8_t updateDisplay = 0;
+      // Handle transition of states using button transition
+      uint8_t buttonState = !digitalRead(BUTTONPIN);
+      uint8_t buttonPressed = 0;
+      uint8_t buttonLongPressed = 0;
 
-      uint8_t newState = digitalRead(BUTTONPIN);
-      if ((newState != lastState) && (!newState)) {
-         count++;
+      if (buttonState != lastButtonState) {
+         if (buttonState) { // Button is pressed
+            buttonPressTime = millis();
+         } else { // Button is released
+            uint32_t pressDuration = millis() - buttonPressTime;
+            if (pressDuration < 1000) {
+               buttonPressed = 1;
+               buttonLongPressed = 0;
+            } else {
+               buttonLongPressed = 1;
+               buttonPressed = 0;
+            }
+         }
+         lastButtonState = buttonState;
       }
-      lastState = newState;
 
-      uint32_t now = millis() - timeOffset;
-      
-      if (0 && now - lastSwitch > 1000) {
-         displayState.dots = !displayState.dots;
-         lastSwitch = now;
-         updateDisplay = 1;
+      if (buttonLongPressed) { // Handle long press
+         switch (state) {
+         case SHOW_TIME:
+            state = ADJUST_HOURS;
+            adjustStartTime = millis();
+            timeOffset = adjustStartTime - timeOffset;
+            digitalWrite(LED_BUILTIN, HIGH);
+            break;
+
+         case ADJUST_HOURS:
+            state = ADJUST_MINUTES;
+            break;
+
+         case ADJUST_MINUTES:
+            state = SHOW_TIME;
+            timeOffset = timeOffset - 2 * (millis() - adjustStartTime);
+            digitalWrite(LED_BUILTIN, LOW);
+            break;
+         
+         default:
+            break;
+         }
+      } else if (buttonPressed) { // Handle short press
+         switch (state) {
+         case ADJUST_HOURS:
+            // timeOffset = timeOffset + 3600000;
+            timeOffset = timeOffset + 60000;
+            break;
+
+         case ADJUST_MINUTES:
+            // timeOffset = timeOffset + 60000;
+            timeOffset = timeOffset + 1000;
+            break;
+         
+         default:
+            break;
+         }
       }
-      
-      uint32_t seconds = now / 1000;
-      displayState.digit2 = (seconds % 60) / 10;
-      
-      if (displayState.digit3 != count % 10) {
-         // displayState.digit3 = seconds % 10;
-         displayState.digit3 = count % 10;
-         updateDisplay = 1;
-         uint32_t minutes = seconds / 60;
-         displayState.digit0 = (minutes % 60) / 10;
-         displayState.digit1 = minutes % 10;
+
+      uint32_t now = millis();
+      if (now - lastDotBlink > 1000) {
+         dotEnable = !dotEnable;
+         lastDotBlink = now;
       }
-      
-      if (updateDisplay) {
-         display(&displayState);
+
+      switch (state) {
+         case SHOW_TIME:
+            displayTime(millis() + timeOffset, dotEnable);
+            break;
+         
+         case ADJUST_MINUTES:
+            displayTime(timeOffset, dotEnable);
+            break;
+         
+         case ADJUST_HOURS: 
+            displayTime(timeOffset, dotEnable);
+            break;
+
+         default:
+            break;
       }
    }
 
    return 0;
+}
+
+void displayTime(uint32_t time, uint8_t dotEnable) {
+   display_state_t displayState;
+   uint32_t seconds = time / 1000;
+   
+   uint32_t minutes = seconds / 60;
+   displayState.digit0 = (minutes % 60) / 10;
+   displayState.digit1 = minutes % 10;
+   displayState.digit2 = (seconds % 60) / 10;
+   displayState.digit3 = seconds % 10;
+   displayState.dots = dotEnable;
+   display(&displayState);
 }
