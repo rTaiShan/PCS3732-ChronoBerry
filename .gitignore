@@ -1,7 +1,7 @@
 kernel.elf 
 kernel.map 
 kernel.list 
-kernel.img 
+src/kernel.img 
 kernel.hex
 
 .vscode/
@@ -21,7 +21,6 @@ kernel.hex
 
 # Object files
 *.ko
-*.elf
 
 # Linker output
 *.ilk
